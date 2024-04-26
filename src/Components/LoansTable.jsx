@@ -36,6 +36,9 @@ export default function LoansTable(props) {
                                 {rowData.phoneNumber}
                             </td>
                             <td>
+                                {rowData.loanType}
+                            </td>
+                            <td>
                                 ${rowData.loanAmount}
                             </td>
                             <td>
