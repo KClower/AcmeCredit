@@ -12,12 +12,13 @@ export default function Loans() {
     //     loanAmount: ""
     // })
 
-    const columns = ["First Name", "E-mail", "Phone Number", "Loan Amount", ""]
+    const columns = ["Name", "E-mail", "Phone #", "Type of Loan", "Loan Amount", ""]
     const data = [{
         id: "1",
         name: "John Doe",
         email: "JohnDoe@gmail.com",
         phoneNumber: "555-555-5555",
+        loanType: "Business",
         loanAmount: "5000.00"
     },
     {
@@ -25,6 +26,7 @@ export default function Loans() {
         name: "John Doe",
         email: "JohnDoe@gmail.com",
         phoneNumber: "123-456-7890",
+        loanType: "Personal",
         loanAmount: "1500.00"
     },
     {
@@ -32,6 +34,7 @@ export default function Loans() {
         name: "John Doe",
         email: "JohnDoe@gmail.com",
         phoneNumber: "555-567-5309",
+        loanType: "Consolidation",
         loanAmount: "30000.00"
     }]
 

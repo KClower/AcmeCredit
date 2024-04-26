@@ -5,7 +5,7 @@ import {
     FormGroup,
     Label,
     Input,
-    Button
+    Button,
 } from 'reactstrap';
 
 const formSchema = yup.object().shape({
@@ -13,9 +13,10 @@ const formSchema = yup.object().shape({
     email: yup.string()
         .email("Must be a valid email address")
         .required("Must include email address"),
-    phone: yup.number("Must be a valid phone number")
+    phoneNumber: yup.tele("Must be a valid phone number xxx-xxx-xxxx")
         .required("Must include phone number"),
-    amount: yup.number().required("Must include an amount")
+    loanType: yup.string().required("Please choose a Option"),
+    loanAmount: yup.number().required("Must include an amount")
 })
 
 export default function LoanApplication() {
@@ -24,29 +25,55 @@ export default function LoanApplication() {
         name: "",
         email: "",
         phoneNumber: "",
+        loanType: "",
         loanAmount: ""
     });
 
-    // const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [buttonDisabled, setButtonDisabled] = useState(true);
 
-    // useEffect(() => {
-    //     formSchema.isValid(formState).then((valid) => {
-    //         setButtonDisabled(!valid);
-    //     })
-    // }, [formState])
+    useEffect(() => {
+        formSchema.isValid(formState).then((valid) => {
+            setButtonDisabled(!valid);
+        })
+    }, [formState])
 
-    // const [errorState, setErrorState] = useState({
-    //     name: "",
-    //     email: "",
-    //     phoneNumber: "",
-    //     loanAmount: ""
-    // });
+    const [errorState, setErrorState] = useState({
+        name: "",
+        email: "",
+        phoneNumber: "",
+        loanType: "",
+        loanAmount: ""
+    });
 
-    const inputChange = (event) => {
-        // event.persist();
-        console.log("input changed", event.target.value)
-        // let value = event.target.type === "numberz" ? event.target.numberz : event.target.value;
-        setFormState({ ...formState, [event.target.name]: value });
+    const formSubmit = e => {
+        e.preventrDefault();
+        console.log("Form Submitted!");
+        axios.post('http://reqres.in/api/users', formState)
+            .then(response => console.log(response))
+            .catch(err => console.log(err))
+    }
+
+    const validate = (e) => {
+        yup.reach(formSchema, e.target.name).validate(e.target.value)
+            .then(valid => {
+                setErrorState({
+                    ...errorState, [e.target.name]: ""
+                })
+            })
+            .catch(err => {
+                console.log(err.errors)
+                setErrorState({
+                    ...errorState, [e.target.name]: err.errors[0]
+                })
+            })
+    }
+
+    const inputChange = e => {
+        e.persist();
+        validate(e)
+        console.log("input changed!", e.target.value)
+        setFormState({ ...formState, [e.target.name]: e.target.value });
+
     }
 
     return (
@@ -54,7 +81,7 @@ export default function LoanApplication() {
             width: "60%"
         }}>
             <h2 className="pb-3">Loan Application</h2>
-            <Form>
+            <Form onSubmit={formSubmit}>
                 <FormGroup>
                     <Label htmlFor="name">
                         Name
@@ -66,6 +93,7 @@ export default function LoanApplication() {
                         value={formState.name}
                         onChange={inputChange}
                     />
+                    {errorState.name.length > 0 ? (<p className="error">{errorState.name}</p>) : null}
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="email">
@@ -78,6 +106,7 @@ export default function LoanApplication() {
                         value={formState.email}
                         onChange={inputChange}
                     />
+                    {errorState.email.length > 0 ? (<p className="error">{errorState.email}</p>) : null}
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="phoneNumber">
@@ -86,10 +115,29 @@ export default function LoanApplication() {
                     <Input
                         id="phoneNumber"
                         name="phoneNumber"
-                        type="text"
+                        type="tele"
                         value={formState.phoneNumber}
                         onChange={inputChange}
                     />
+                    {errorState.phoneNumber.length > 0 ? (<p className="error">{errorState.phoneNumber}</p>) : null}
+                </FormGroup>
+                <FormGroup>
+                    <Label htmlFor="loanType">
+                        Type of Loan
+                    </Label>
+                    <Input
+                        id="loanType"
+                        name="loanType"
+                        type="select"
+                        value={formState.loanType}
+                        onChange={inputChange}
+                    >
+                        <option value="">-- Please Choose an Option --</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Business">Business</option>
+                        <option value="Consolidation">Consolidation</option>
+                        {errorState.loanType.length > 0 ? (<p className="error">{errorState.loanType}</p>) : null}
+                    </Input>
                 </FormGroup>
                 <FormGroup>
                     <Label htmlFor="loanAmount">
@@ -98,13 +146,14 @@ export default function LoanApplication() {
                     <Input
                         id="loanAmount"
                         name="loanAmount"
-                        type="text"
-                        value={formState.loanAmount}
+                        type="numberz"
                         step="0.01"
+                        value={formState.loanAmount}
                         onChange={inputChange}
                     />
+                    {errorState.loanAmount.length > 0 ? (<p className="error">{errorState.loanAmount}</p>) : null}
                 </FormGroup>
-                <Button>
+                <Button disabled={buttonDisabled}>
                     Submit
                 </Button>
             </Form>
