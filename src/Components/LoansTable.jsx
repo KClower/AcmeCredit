@@ -1,11 +1,13 @@
-
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { Table } from 'reactstrap';
 
 export default function LoansTable(props) {
-
+    console.log(props)
     const { tableCols, dataSourse } = props
+    const history = useHistory()
 
-    const clickHandler = () => {
+    const clickHandler = (loan) => {
+        history.push(`/EditLoan/${loan.id}`, loan)
 
     }
 
@@ -42,7 +44,7 @@ export default function LoansTable(props) {
                                 ${rowData.loanAmount}
                             </td>
                             <td>
-                                <button className="btn btn-success">Edit</button>
+                                <button className="btn btn-success" onClick={() => clickHandler(rowData)}>Edit</button>
                             </td>
                         </tr>
                     )
